@@ -1,0 +1,90 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Queries
+    mutation: Mutations
+}
+
+"An object with an ID"
+interface Node {
+    "The ID of the object."
+    id: ID!
+}
+
+type CreateMessageMutation {
+    formErrors: String
+    message: MessageType
+    status: Int
+}
+
+type MessageType implements Node {
+    creationDate: DateTime!
+    "The ID of the object."
+    id: ID!
+    message: String!
+    user: UserType!
+}
+
+type MessageTypeConnection {
+    "Contains the nodes in this connection."
+    edges: [MessageTypeEdge]!
+    "Pagination data for this connection."
+    pageInfo: PageInfo!
+}
+
+"A Relay edge containing a `MessageType` and its cursor."
+type MessageTypeEdge {
+    "A cursor for use in pagination"
+    cursor: String!
+    "The item at the end of the edge"
+    node: MessageType
+}
+
+type Mutations {
+    createMessage(message: String): CreateMessageMutation
+}
+
+"The Relay compliant `PageInfo` type, containing data necessary to paginate this connection."
+type PageInfo {
+    "When paginating forwards, the cursor to continue."
+    endCursor: String
+    "When paginating forwards, are there more items?"
+    hasNextPage: Boolean!
+    "When paginating backwards, are there more items?"
+    hasPreviousPage: Boolean!
+    "When paginating backwards, the cursor to continue."
+    startCursor: String
+}
+
+type Queries {
+    allMessages(after: String, before: String, first: Int, last: Int, message_Icontains: String): MessageTypeConnection
+    currentUser: UserType
+    message(id: ID): MessageType
+}
+
+type UserType {
+    dateJoined: DateTime!
+    email: String!
+    firstName: String!
+    id: ID!
+    "Designates whether this user should be treated as active. Unselect this instead of deleting accounts."
+    isActive: Boolean!
+    "Designates whether the user can log into this admin site."
+    isStaff: Boolean!
+    "Designates that this user has all permissions without explicitly assigning them."
+    isSuperuser: Boolean!
+    lastLogin: DateTime
+    lastName: String!
+    messageSet(after: String, before: String, first: Int, last: Int, message_Icontains: String): MessageTypeConnection!
+    password: String!
+    "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+    username: String!
+}
+
+
+"""
+The `DateTime` scalar type represents a DateTime
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar DateTime
