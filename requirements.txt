@@ -1,0 +1,11 @@
+django
+graphene_django
+djangorestframework
+django-cors-headers
+djangorestframework-jwt
+django-filter
+pytest
+pytest-django
+pytest-cov
+mixer
+
