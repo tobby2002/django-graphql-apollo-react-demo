@@ -34,7 +34,7 @@ def test_resolve_current_user():
 
 
 def test_resolve_message():
-    msg = mixer.blend('simple_app.Message')
+    msg = mixer.blend('message.Message')
     q = schema.Query()
     id = to_global_id('MessageType', msg.pk)
     res = q.resolve_message({'id': id}, None, None)
@@ -42,8 +42,8 @@ def test_resolve_message():
 
 
 def test_resolve_all_messages():
-    mixer.blend('simple_app.Message')
-    mixer.blend('simple_app.Message')
+    mixer.blend('message.Message')
+    mixer.blend('message.Message')
     q = schema.Query()
     res = q.resolve_all_messages(None, None, None)
     assert res.count() == 2, 'Should return all messages'

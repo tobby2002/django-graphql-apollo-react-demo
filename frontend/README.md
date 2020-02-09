@@ -1338,7 +1338,7 @@ Create React App doesn’t include any tools for this by default, but you can ea
 
 ![React Storybook Demo](http://i.imgur.com/7CIAWpB.gif)
 
-You can also deploy your Storybook as a static app. This way, everyone in your team can view and review different states of UI components without starting a backend server or creating an account in your app.
+You can also deploy your Storybook as a static app. This way, everyone in your team can view and review different states of UI components without starting a app server or creating an account in your app.
 
 **Here’s how to setup your app with Storybook:**
 

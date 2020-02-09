@@ -1,4 +1,4 @@
-"""backend URL Configuration
+"""app URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.9/topics/http/urls/
@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^graphql', csrf_exempt(GraphQLView.as_view(graphiql=True))),
     url(r'^gql', csrf_exempt(GraphQLView.as_view(batch=True))),
-    url(r'^api-token-auth/', obtain_jwt_token),
-    url(r'^api-token-refresh/', refresh_jwt_token),
-    url(r'^api-token-verify/', verify_jwt_token),
+    url(r'^api-token-auth/', csrf_exempt(obtain_jwt_token)),
+    url(r'^api-token-refresh/', csrf_exempt(refresh_jwt_token)),
+    url(r'^api-token-verify/', csrf_exempt(verify_jwt_token)),
 ]

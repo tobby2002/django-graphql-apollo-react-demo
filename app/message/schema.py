@@ -1,13 +1,13 @@
 import json
-import graphene
+import graphene as g
 from django.contrib.auth.models import User
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter.fields import DjangoFilterConnectionField
 from graphql_relay.node.node import from_global_id
+from app.message.models import Message
 
-from . import models
 
-
+# 0. create type
 class UserType(DjangoObjectType):
     class Meta:
         model = User
@@ -15,18 +15,38 @@ class UserType(DjangoObjectType):
 
 class MessageType(DjangoObjectType):
     class Meta:
-        model = models.Message
+        model = Message
         filter_fields = {'message': ['icontains']}
-        interfaces = (graphene.Node, )
+        interfaces = (g.Node, )
 
 
-class CreateMessageMutation(graphene.Mutation):
+# 1. create query
+class Query(g.AbstractType):
+    current_user = g.Field(UserType)
+    message = g.Field(MessageType, id=g.ID())
+    all_messages = DjangoFilterConnectionField(MessageType)
+
+    def resolve_current_user(self, args, context, info):
+        if not context.user.is_authenticated():
+            return None
+        return context.user
+
+    def resolve_message(self, args, context, info):
+        rid = from_global_id(args.get('id'))
+        return Message.objects.get(pk=rid[1])
+
+    def resolve_all_messages(self, args, context, info):
+        return Message.objects.all()
+
+
+# 2. create mutation
+class CreateMessageMutation(g.Mutation):
     class Input:
-        message = graphene.String()
+        message = g.String()
 
-    status = graphene.Int()
-    formErrors = graphene.String()
-    message = graphene.Field(MessageType)
+    status = g.Int()
+    formErrors = g.String()
+    message = g.Field(MessageType)
 
     @staticmethod
     def mutate(root, args, context, info):
@@ -38,31 +58,14 @@ class CreateMessageMutation(graphene.Mutation):
                 status=400,
                 formErrors=json.dumps(
                     {'message': ['Please enter a message.']}))
-        obj = models.Message.objects.create(
+        obj = Message.objects.create(
             user=context.user, message=message
         )
         return CreateMessageMutation(status=200, message=obj)
 
 
-class Mutation(graphene.AbstractType):
+class Mutation(g.AbstractType):
     create_message = CreateMessageMutation.Field()
 
 
-class Query(graphene.AbstractType):
-    current_user = graphene.Field(UserType)
 
-    def resolve_current_user(self, args, context, info):
-        if not context.user.is_authenticated():
-            return None
-        return context.user
-
-    message = graphene.Field(MessageType, id=graphene.ID())
-
-    def resolve_message(self, args, context, info):
-        rid = from_global_id(args.get('id'))
-        return models.Message.objects.get(pk=rid[1])
-
-    all_messages = DjangoFilterConnectionField(MessageType)
-
-    def resolve_all_messages(self, args, context, info):
-        return models.Message.objects.all()
